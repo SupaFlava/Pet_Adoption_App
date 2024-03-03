@@ -1,11 +1,10 @@
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import fetchpet from "./fetchPet";
-
+import Carousel from "./Carousel";
 const Details = () => {
   const { id } = useParams();
   const results = useQuery(["details", id], fetchpet);
-  console.log("result", results);
 
   if (results.isLoading) {
     return (
@@ -16,9 +15,10 @@ const Details = () => {
   }
 
   const pet = results.data.pets[0];
-  console.log("pet", pet);
+
   return (
     <div className="details">
+      <Carousel images={pet.images} />
       <div>
         <h1>{pet.name}</h1>
         <h2>
