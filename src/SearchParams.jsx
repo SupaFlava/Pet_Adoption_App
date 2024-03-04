@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
+import AdoptedPetContext from "./AdoptedPetContext";
 import Results from "./Results";
 import fetchSearch from "./fetchSearch";
 import useBreedList from "./useBreedList";
@@ -13,11 +14,13 @@ const SearchParams = () => {
   });
   const [animal, setAnimal] = useState("");
   const [breeds] = useBreedList(animal);
+  const [adoptedPet] = useContext(AdoptedPetContext);
   const results = useQuery(["search", requestParams], fetchSearch);
   const pets = results?.data?.pets ?? [];
   return (
-    <div className="search-params">
+    <div className="my-0 mx-auto w-11/12 ">
       <form
+        className="p-10 mb-10 rounded-lg bg-gray-200 shadow-lg flex flex-col justify-center items-center"
         onSubmit={(e) => {
           e.preventDefault();
           const formData = new FormData(e.target);
@@ -29,13 +32,25 @@ const SearchParams = () => {
           setRequestParams(obj);
         }}
       >
+        {adoptedPet ? (
+          <div className="pet image-container">
+            <img src={adoptedPet.images[0]} alt={adoptedPet.name} />
+          </div>
+        ) : null}
         <label htmlFor="location">
           location
-          <input name="location" id="location" placeholder="location" />
+          <input
+            className="w-60 mb-5 block"
+            type="text"
+            name="location"
+            id="location"
+            placeholder="location"
+          />
         </label>
         <label htmlFor="animal">
           Animal
           <select
+            className="w-60 mb-5 block"
             id="animal"
             value={animal}
             onChange={(e) => {
@@ -49,14 +64,22 @@ const SearchParams = () => {
           </select>
         </label>
         <label htmlFor="breed">
-          <select id="breed" disabled={breeds.length === 0} name="breed">
+          Breed
+          <select
+            className="w-60 mb-5 block disabled:opacity-50"
+            id="breed"
+            disabled={breeds.length === 0}
+            name="breed"
+          >
             <option />
             {breeds.map((breed) => (
               <option key={breed}>{breed}</option>
             ))}
           </select>
         </label>
-        <button>Submit</button>
+        <button className="rounded px-6 py-2  text-white hover:opacity-50 border-none bg-orange-500">
+          Submit
+        </button>
       </form>
       <Results pets={pets} />
     </div>
